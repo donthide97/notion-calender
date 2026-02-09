@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --text-main: #4a4e69;
+            --accent: #9b5de5;
+        }
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient); /* Sanfter Pastell-Verlauf */
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            color: var(--text-main);
+        }
+        .widget {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px 60px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+        .time {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            
+            /* Standard Eigenschaft für maximale Kompatibilität */
+            background-clip: text; 
+            
+            /* Vendor-Präfixe für ältere Browser-Engines */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            opacity: 0.9;
+        }
+        .date {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget">
+        <div class="time" id="time">00:00:00</div>
+        <div class="date" id="date">-- . -------- ----</div>
+    </div>
+
+    <script>
+        function update() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString('de-DE', { hour12: false });
+            document.getElementById('date').textContent = now.toLocaleDateString('de-DE', { 
+                day: '2-digit', month: 'long', year: 'numeric' 
+            });
+        }
+        setInterval(update, 1000);
+        update();
+    </script>
+</body>
+</html>
