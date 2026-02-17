@@ -4,20 +4,46 @@
     <meta charset="UTF-8">
     <style>
         :root {
-            --bg-mint: #a2d9ce;
-            --frame-purple: #c39bd3;
-            --flap-bg: #222;
+            --bg-outer: #fdfefe; /* Weiß wie auf Foto */
+            --frame-dark-pastel-red: #d98880; /* Dunkelpastellrot */
+            --inner-light-pastel-red: #f2d7d5; /* Hellpastellrot */
+            --flap-bg: #191919; /* Schwarz vom Foto */
             --text-white: #ffffff;
             --anim-speed: 0.6s;
             --gap: 5px;
             --digit-width: 90px;
             --digit-height: 180px;
             --font-size: 110px;
+            /* Deine gewünschte Schriftart */
+            --font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
         }
 
-        body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg-mint); font-family: 'Arial Black', sans-serif; transform: scale(0.4); }
-        .outer-frame { background: var(--frame-purple); padding: 35px; border-radius: 70px; box-shadow: inset 0 -10px 0 rgba(0,0,0,0.2), 0 25px 50px rgba(0,0,0,0.15); }
-        .inner-face { background: #fdfefe; padding: 50px; border-radius: 50px; display: flex; gap: 20px; align-items: center; border: 5px solid rgba(0,0,0,0.05); }
+        body { 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: var(--bg-outer); 
+            font-family: var(--font-family); 
+            transform: scale(0.6); 
+        }
+
+        .outer-frame { 
+            background: var(--frame-dark-pastel-red); 
+            padding: 35px; 
+            border-radius: 70px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+        }
+
+        .inner-face { 
+            background: var(--inner-light-pastel-red); 
+            padding: 50px; 
+            border-radius: 50px; 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+        }
 
         .flip-unit {
             position: relative; width: var(--digit-width); height: var(--digit-height);
@@ -28,63 +54,48 @@
             position: absolute; left: 0; width: 100%; height: calc(50% - (var(--gap) / 2));
             background: var(--flap-bg); color: var(--text-white);
             overflow: hidden; text-align: center; font-size: var(--font-size);
-            backface-visibility: hidden;
+            backface-visibility: hidden; font-weight: bold;
         }
 
         .upper { top: 0; border-radius: 10px 10px 0 0; line-height: var(--digit-height); border-bottom: 1px solid rgba(0,0,0,0.5); z-index: 1; }
         .lower { bottom: 0; border-radius: 0 0 10px 10px; line-height: 0; z-index: 2; }
 
-        .flip-unit::before {
-            content: ''; position: absolute; top: 50%; left: -5px; right: -5px;
-            height: 6px; background: #444; z-index: 10; border-radius: 3px; transform: translateY(-50%);
-        }
-
         .leaf {
             position: absolute; top: 0; left: 0; width: 100%; height: calc(50% - (var(--gap) / 2));
-            z-index: 5; transform-origin: bottom;
-            transform-style: preserve-3d;
-            transition: none; 
+            z-index: 5; transform-origin: bottom; transform-style: preserve-3d;
         }
 
         .leaf-front, .leaf-back {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             backface-visibility: hidden; background: var(--flap-bg); color: var(--text-white);
-            text-align: center; font-size: var(--font-size); overflow: hidden;
+            text-align: center; font-size: var(--font-size); overflow: hidden; font-weight: bold;
         }
 
-        .leaf-front { border-radius: 10px 10px 0 0; line-height: var(--digit-height); border-bottom: 1px solid rgba(0,0,0,0.5); }
-        .leaf-back { transform: rotateX(-270deg); border-radius: 0 0 10px 10px; line-height: 0; }
+        .leaf-front { border-radius: 10px 10px 0 0; line-height: var(--digit-height); }
+        .leaf-back { transform: rotateX(-180deg); border-radius: 0 0 10px 10px; line-height: 0; }
 
         .flipping .leaf { 
             transition: transform var(--anim-speed) ease-in-out;
             transform: rotateX(-180deg); 
         }
 
-        /* Kalender Optimierung */
         .calendar { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            width: 200px; /* Definierte Basisbreite */
-            margin-left: 15px;
+            display: flex; flex-direction: column; gap: 10px; width: 280px; margin-left: 15px;
         }
 
         .cal-box { 
-            background: linear-gradient(to bottom, #333 50%, #222 50%); 
+            background: var(--flap-bg); 
             color: white; 
             padding: 15px 5px; 
             border-radius: 12px; 
             text-align: center; 
-            font-size: 22px; 
-            box-sizing: border-box;
-            width: 100%;
+            font-size: 28px; 
+            font-weight: 900; /* Extra Fett */
+            text-transform: uppercase;
         }
 
         .cal-sub-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Exakt 50/50 Teilung */
-            gap: 10px;
-            width: 100%;
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; width: 100%;
         }
     </style>
 </head>
@@ -96,17 +107,11 @@
             <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
             <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
         </div>
-        <div class="separator" style="font-size:80px; color:#333;">:</div>
+        <div class="separator" style="font-size:80px; color:var(--flap-bg); font-weight: bold;">:</div>
         <div id="m-group" style="display:flex; gap:10px;">
             <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
             <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
         </div>
-        <div class="separator" style="font-size:80px; color:#333;">:</div>
-        <div id="s-group" style="display:flex; gap:10px;">
-            <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
-            <div class="flip-unit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
-        </div>
-        
         <div class="calendar">
             <div class="cal-box" id="dayName">---</div>
             <div class="cal-sub-row">
@@ -120,12 +125,16 @@
 <script>
     function update() {
         const now = new Date();
-        const time = [now.getHours(), now.getMinutes(), now.getSeconds()].map(v => v.toString().padStart(2, '0'));
-        updateGroup('h-group', time[0]);
-        updateGroup('m-group', time[1]);
-        updateGroup('s-group', time[2]);
-        document.getElementById('dayName').textContent = now.toLocaleDateString('de-DE', { weekday: 'short' }).toUpperCase();
-        document.getElementById('month').textContent = now.toLocaleDateString('de-DE', { month: 'short' }).toUpperCase();
+        const h = now.getHours().toString().padStart(2, '0');
+        const m = now.getMinutes().toString().padStart(2, '0');
+        
+        updateGroup('h-group', h);
+        updateGroup('m-group', m);
+
+        // Wochentag ausgeschrieben
+        document.getElementById('dayName').textContent = now.toLocaleDateString('de-DE', { weekday: 'long' });
+        // Monat kurz oder lang nach Wunsch - hier kurz für Platz
+        document.getElementById('month').textContent = now.toLocaleDateString('de-DE', { month: 'long' });
         document.getElementById('dayNum').textContent = now.getDate().toString().padStart(2, '0');
     }
 
@@ -149,11 +158,8 @@
 
                 units[i].classList.add('flipping');
 
-                setTimeout(() => {
-                    low.textContent = digit;
-                }, 300);
-
-                setTimeout(() => {
+                setTimeout(() => { low.textContent = digit; }, 300);
+                setTimeout(() => { 
                     units[i].classList.remove('flipping');
                     front.textContent = digit;
                 }, 600); 
