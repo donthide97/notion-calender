@@ -9,149 +9,184 @@
             --dial-bg: #1c1a17;
             --text-white: #ffffff;
             --divider: rgba(255, 255, 255, 0.1);
-            --anim-speed: 0.6s;
+            --anim-speed: 0.69s;
+            --gap: 5px;
         }
 
         body { 
-            margin: 0; 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: var(--body-bg); 
-            font-family: 'Arial Black', 'Helvetica', sans-serif;
+            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; 
+            background: var(--body-bg); font-family: 'Arial Black', sans-serif;
             overflow: hidden;
         }
 
-        /* 340px Breite Slot Optimierung */
         .karlsson-container {
-            transform: scale(0.68); /* Angepasst für 340px effektive Breite */
-            width: 500px;
+            transform: scale(0.68);
+            width: 580px;
             height: 580px;
             background: var(--wood-gradient);
             border-radius: 40px;
-            padding: 30px;
+            padding: 25px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.5);
             box-sizing: border-box;
-            overflow: visible; /* Schatten sichtbar lassen */
         }
 
         .inner-dial {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background: var(--dial-bg);
             border-radius: 20px;
-            padding: 25px;
+            padding: 15px; 
             box-sizing: border-box;
             display: grid;
-            grid-template-columns: 200px 1fr;
-            grid-template-rows: 60px 80px 120px 80px;
-            gap: 15px;
-            align-items: center;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 80px 1fr;
+            gap: 50px;
         }
 
-        /* Reihe 1: Jahr */
-        .year-section {
+        .header-year {
             grid-column: 1 / span 2;
-            text-align: center;
-            color: var(--text-white);
-            font-size: 45px;
-            font-weight: 900;
-            letter-spacing: -1px;
+            display: flex; justify-content: center; gap: 8px;
+            height: 80px;
         }
 
-        /* Flip Engine Styles (Universell) */
+        .body-grid {
+            grid-column: 1 / span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .col-left, .col-right {
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .col-left { gap: 20px; }
+        .col-right { gap: 10px; }
+
+        /* --- PHYSICAL LAYER FLIP ENGINE --- */
         .flip-unit {
             position: relative;
-            width: 100%;
-            height: 100%;
-            perspective: 1000px;
+            perspective: 1000px; /* Erhöhte Perspektive für sattere Landung */
         }
-        .flip-unit .upper, .flip-unit .lower, .flip-unit .leaf-front, .flip-unit .leaf-back {
-            position: absolute; left: 0; width: 100%; height: calc(50% - 1px);
-            background: #252320; color: var(--text-white);
-            text-align: center; font-weight: 900;
-            overflow: hidden; backface-visibility: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .upper, .leaf-front { top: 0; border-radius: 8px 8px 0 0; border-bottom: 1px solid var(--divider); }
-        .lower, .leaf-back { bottom: 0; border-radius: 0 0 8px 8px; line-height: 0; }
-        .leaf { position: absolute; top: 0; left: 0; width: 100%; height: calc(50% - 1px); z-index: 5; transform-origin: bottom; transform-style: preserve-3d; transition: none; }
-        .leaf-back { transform: rotateX(-270deg); }
-        .flipping .leaf { transition: transform var(--anim-speed) ease-in-out; transform: rotateX(-180deg); }
-        .flip-unit::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #111; z-index: 10; transform: translateY(-50%); }
 
-        /* Spezifische Flip-Größen */
-        .day-name-flip { grid-row: 2; grid-column: 1; height: 80px; width: 180px; margin: 0 auto; }
-        .day-name-flip .upper, .day-name-flip .leaf-front { font-size: 45px; line-height: 80px; }
+        .upper, .lower, .leaf-front, .leaf-back {
+            position: absolute; left: 0; width: 100%; height: calc(50% - (var(--gap) / 2));
+            background-color: #252320 !important; /* Absolut deckend */
+            color: var(--text-white);
+            overflow: hidden; text-align: center; font-weight: 900;
+            backface-visibility: hidden;
+            opacity: 1 !important;
+        }
+
+        .upper { top: 0; border-radius: 8px 8px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1; }
         
-        .day-num-flip { grid-row: 2 / span 2; grid-column: 2; height: 180px; }
-        .day-num-flip .upper, .day-num-flip .leaf-front { font-size: 140px; line-height: 180px; }
-
-        .month-flip { grid-row: 4; grid-column: 2; height: 80px; align-self: flex-end; }
-        .month-flip .upper, .month-flip .leaf-front { font-size: 45px; line-height: 80px; }
-
-        /* Analoge Uhr */
-        .analog-clock-container {
-            grid-row: 3 / span 2;
-            grid-column: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .lower { 
+            bottom: 0; border-radius: 0 8px 8px; line-height: 0; 
+            z-index: 1;
+            transform: translateZ(-10px);
         }
+
+        .leaf {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(52% - (var(--gap) / 2));
+            z-index: 5; 
+            transform-origin: bottom;
+            transform-style: preserve-3d; 
+            transition: none; 
+            transform: translateZ(10px); /* Verhindert Z-Fighting */
+        }
+
+        .leaf-front, .leaf-back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            backface-visibility: hidden; background: var(--flap-bg); color: var(--text-white);
+            text-align: center; font-size: var(--font-size); overflow: hidden;
+        }
+
+        .leaf-front { border-radius: 10px 10px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 2; }
+        .leaf-back { transform: rotateX(-270deg) translateZ(1px); border-radius: 0 0 10px 10px; line-height: 0; z-index: 2; }
+
+        .flipping .leaf { 
+            transition: transform var(--anim-speed) cubic-bezier(0.4, 0, 0.3, 1.5);
+            transform: rotateX(-170deg) translateZ(1px); /* Karlsson-Stop Winkel */
+        }
+
+        .flip-unit::before {
+            content: ''; position: absolute; top: 50%; left: -3px; right: -3px;
+            height: 3px; background: #444; z-index: 10;
+            border-radius: 3px; transform: translateY(-50%);
+        }
+
+        /* --- SIZES --- */
+        .year-digit { width: 52px; height: 80px; font-size: 69px; }
+        .year-digit .upper, .year-digit .leaf-front { line-height: 80px; }
+
+        .day-name-flip, .month-flip { width: 180px; height: 80px; font-size: 52px; }
+        .day-name-flip .upper, .day-name-flip .leaf-front,
+        .month-flip .upper, .month-flip .leaf-front { line-height: 80px; }
+
+        .day-num-group { grid-row: 2 / span 2; grid-column: 2; display: flex; gap: 10px; height: 180px; }
+        .num-digit { width: 100px; height: 180px; font-size: 172px; }
+        .num-digit .upper, .num-digit .leaf-front { line-height: 180px; }
+
+        .sec-counter-group { display: flex; gap: 5px; justify-content: center; opacity: 0.8; }
+        .sec-digit { width: 45px; height: 60px; font-size: 46px; }
+        .sec-digit .upper, .sec-digit .leaf-front { line-height: 60px; }
+
+        /* Analog Clock */
         .analog-clock {
-            width: 190px;
-            height: 190px;
-            border-radius: 50%;
-            background: #252320;
-            position: relative;
-            border: 2px solid #333;
+            width: 250px; height: 250px; border-radius: 50%;
+            background: #252320; position: relative; border: 2px solid #333;
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
-        .analog-marker { position: absolute; width: 2px; height: 10px; background: #555; left: 50%; transform-origin: 50% 95px; }
+        .analog-marker { position: absolute; width: 2px; height: 10px; background: #555; left: 50%; transform-origin: 50% 125px; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; background: #fff; border-radius: 2px; }
-        .hour-hand { width: 6px; height: 45px; margin-left: -3px; z-index: 8; }
-        .min-hand { width: 4px; height: 75px; margin-left: -2px; z-index: 9; }
-        .sec-hand { width: 2px; height: 80px; margin-left: -1px; background: #ff3b30; z-index: 11; }
-
-        .hidden { display: none; }
+        .hour-hand { width: 6px; height: 80px; margin-left: -3px; z-index: 8; }
+        .min-hand { width: 4px; height: 100px; margin-left: -2px; z-index: 9; }
+        .sec-hand { width: 2px; height: 100px; margin-left: -1px; background: #ff3b30; z-index: 11; }
     </style>
 </head>
 <body>
 
 <div class="karlsson-container">
     <div class="inner-dial">
-        <div class="year-section">2026</div>
-        
-        <div id="day-name-unit" class="flip-unit day-name-flip">
-            <div class="upper">---</div><div class="lower">---</div>
-            <div class="leaf"><div class="leaf-front">---</div><div class="leaf-back">---</div></div>
+        <div id="year-group" class="header-year">
+            <div class="flip-unit year-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+            <div class="flip-unit year-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+            <div class="flip-unit year-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+            <div class="flip-unit year-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
         </div>
         
-        <div id="day-num-unit" class="flip-unit day-num-flip">
-            <div class="upper">00</div><div class="lower">00</div>
-            <div class="leaf"><div class="leaf-front">00</div><div class="leaf-back">00</div></div>
-        </div>
-        
-        <div class="analog-clock-container">
-            <div class="analog-clock" id="analog">
-                <div class="center-dot"></div>
-                <div class="hand hour-hand" id="hr"></div>
-                <div class="hand min-hand" id="mn"></div>
-                <div class="hand sec-hand" id="sc"></div>
+        <div class="body-grid">
+            <div class="col-left">
+                <div id="day-name-unit" class="flip-unit day-name-flip">
+                    <div class="upper">---</div><div class="lower">---</div>
+                    <div class="leaf"><div class="leaf-front">---</div><div class="leaf-back">---</div></div>
+                </div>
+                <div class="analog-clock" id="analog">
+                    <div class="center-dot"></div>
+                    <div class="hand hour-hand" id="hr"></div>
+                    <div class="hand min-hand" id="mn"></div>
+                    <div class="hand sec-hand" id="sc"></div>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <div id="day-num-group" style="display:flex; gap:10px;">
+                    <div class="flip-unit num-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+                    <div class="flip-unit num-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+                </div>
+                
+                <div id="sec-group" class="sec-counter-group">
+                    <div class="flip-unit sec-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+                    <div class="flip-unit sec-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
+                </div>
+
+                <div id="month-unit" class="flip-unit month-flip">
+                    <div class="upper">---</div><div class="lower">---</div>
+                    <div class="leaf"><div class="leaf-front">---</div><div class="leaf-back">---</div></div>
+                </div>
             </div>
         </div>
-        
-        <div id="month-unit" class="flip-unit month-flip">
-            <div class="upper">---</div><div class="lower">---</div>
-            <div class="leaf"><div class="leaf-front">---</div><div class="leaf-back">---</div></div>
-        </div>
     </div>
-</div>
-
-<div class="hidden">
-    <div id="h-group"></div><div id="m-group"></div><div id="s-group"></div>
 </div>
 
 <script>
@@ -172,44 +207,71 @@
         const m = now.getMinutes();
         const s = now.getSeconds();
         
-        const dayNum = now.getDate().toString().padStart(2, '0');
+        const yearStr = now.getFullYear().toString();
+        const dayNumStr = now.getDate().toString().padStart(2, '0');
+        const secStr = s.toString().padStart(2, '0');
         const dayName = DE_DAYS[now.getDay()];
         const monthName = DE_MONTHS[now.getMonth()];
 
-        // Analoge Uhr
         document.getElementById('hr').style.transform = `rotate(${(h * 30) + (m / 2)}deg)`;
         document.getElementById('mn').style.transform = `rotate(${m * 6}deg)`;
         document.getElementById('sc').style.transform = `rotate(${s * 6}deg)`;
 
-        // Flips
-        updateFlip('day-name-unit', dayName);
-        updateFlip('day-num-unit', dayNum);
-        updateFlip('month-unit', monthName);
+        updateDigitGroup('year-group', yearStr);
+        updateDigitGroup('day-num-group', dayNumStr);
+        updateDigitGroup('sec-group', secStr);
+        updateFlipUnit('day-name-unit', dayName);
+        updateFlipUnit('month-unit', monthName);
     }
 
-    function updateFlip(id, val) {
-        const unit = document.getElementById(id);
+    function updateDigitGroup(groupId, valStr) {
+        const group = document.getElementById(groupId);
+        const units = group.querySelectorAll('.flip-unit');
+        valStr.split('').forEach((digit, i) => {
+            if (units[i]) updateFlipUnit(units[i], digit);
+        });
+    }
+
+    function updateFlipUnit(elementOrId, val) {
+        const unit = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
+        
+        // Nur flippen, wenn sich der Wert wirklich geändert hat
         if (unit.dataset.val !== val) {
-            const old = unit.dataset.val || (id.includes('num') ? "00" : "---");
+            const old = unit.dataset.val || "0";
             const up = unit.querySelector('.upper');
             const low = unit.querySelector('.lower');
             const front = unit.querySelector('.leaf-front');
             const back = unit.querySelector('.leaf-back');
 
+            // Animation zurücksetzen für einen sauberen Neustart
             unit.classList.remove('flipping');
-            void unit.offsetWidth;
+            void unit.offsetWidth; // Der "Magic Reflow"
 
+            // --- PHASE 1: DER START (0ms) ---
+            // Die Klappe (front) hält die alte Zahl fest
             front.textContent = old;
+            // Die Rückseite (back) bereitet die neue Zahl vor (-270deg Vorspannung im CSS)
             back.textContent = val;
-            up.textContent = val; 
-            low.textContent = old; 
+            // Oben im Hintergrund (up) erscheint SOFORT die neue Zahl
+            up.textContent = val;
+            // Unten (low) bleibt die alte Zahl, wird aber gleich "begraben"
+            low.textContent = old;
 
             unit.classList.add('flipping');
-            setTimeout(() => { low.textContent = val; }, 300);
+
+            // --- PHASE 2: DER WECHSEL (300ms bei 0.6s Speed / 200ms bei 0.4s) ---
+            // Genau wenn die Karte senkrecht steht, tauschen wir unten aus.
+            // Das ist der Moment, in dem das Auge die "Befreiung" wahrnimmt.
+            setTimeout(() => {
+                low.textContent = val;
+            }, 300); // Bei 0.4s Gesamtzeit hier 200 nutzen
+
+            // --- PHASE 3: DIE LANDUNG (600ms bei 0.6s Speed / 400ms bei 0.4s) ---
             setTimeout(() => { 
                 unit.classList.remove('flipping');
+                // Vorderseite für den nächsten Durchgang neutralisieren
                 front.textContent = val;
-            }, 600); 
+            }, 300); // Bei 0.4s Gesamtzeit hier 400 nutzen
 
             unit.dataset.val = val;
         }
