@@ -11,16 +11,17 @@
             --divider: rgba(255, 255, 255, 0.1);
             --anim-speed: 0.69s;
             --gap: 5px;
+            --clock-scale: 0.5
         }
 
         body { 
             margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; 
-            background: var(--body-bg); font-family: 'Arial Black', sans-serif;
+            background: transparent !important; font-family: 'Arial Black', sans-serif;
             overflow: hidden;
         }
 
         .karlsson-container {
-            transform: scale(0.68);
+            transform: scale(--clock-scale);
             width: 580px;
             height: 580px;
             background: var(--wood-gradient);
