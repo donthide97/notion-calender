@@ -10,80 +10,94 @@
             --text-white: #ffffff;
             --divider: rgba(255, 255, 255, 0.1);
             --anim-speed: 0.69s;
-            --gap: 5px;
-            --clock-scale: 0.5
+            /* Wir nutzen cqw (Container Query Width), damit es sich am Notion-Block orientiert */
+            --base-unit: 1cqw; 
+            --gap: 0.8cqw;
         }
 
         body { 
-            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; 
-            background: transparent !important; font-family: 'Arial Black', sans-serif;
+            margin: 0; 
+            height: 100vh; 
+            width: 100vw;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: transparent !important; 
+            font-family: 'Arial Black', sans-serif;
+            /* Container-Type aktivieren, damit Kinder sich auf die Body-Breite beziehen können */
+            container-type: size; 
             overflow: hidden;
         }
 
         .karlsson-container {
-            transform: scale(--clock-scale);
-            width: 580px;
-            height: 580px;
+            /* Keine festen Pixel mehr! */
+            width: 95cqw; 
+            max-width: 95vw;
+            
             background: var(--wood-gradient);
-            border-radius: 40px;
-            padding: 25px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.5);
+            border-radius: 6cqw; /* Radius skaliert mit */
+            padding: 4cqw; 
+            box-shadow: 0 2cqw 5cqw rgba(0,0,0,0.3), inset 0 0.2cqw 0.5cqw rgba(255,255,255,0.5);
             box-sizing: border-box;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .inner-dial {
-            width: 100%; height: 100%;
+            width: 100%; 
             background: var(--dial-bg);
-            border-radius: 20px;
-            padding: 15px; 
+            border-radius: 4cqw;
+            padding: 5cqw; 
             box-sizing: border-box;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 80px 1fr;
-            gap: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 5cqw;
+            align-items: center;
         }
 
         .header-year {
-            grid-column: 1 / span 2;
-            display: flex; justify-content: center; gap: 8px;
-            height: 80px;
+            width: 100%;
+            display: flex; justify-content: center; gap: 1.5cqw;
+            height: 13cqw;
         }
 
         .body-grid {
-            grid-column: 1 / span 2;
+            width: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 2.5cqw;
         }
 
         .col-left, .col-right {
             display: flex; flex-direction: column; align-items: center;
         }
         
-        .col-left { gap: 20px; }
-        .col-right { gap: 10px; }
+        .col-left { gap: 3cqw; }
+        .col-right { gap: 2cqw; }
 
         /* --- PHYSICAL LAYER FLIP ENGINE --- */
         .flip-unit {
             position: relative;
-            perspective: 1000px; /* Erhöhte Perspektive für sattere Landung */
+            perspective: 150cqw;
         }
 
         .upper, .lower, .leaf-front, .leaf-back {
             position: absolute; left: 0; width: 100%; height: calc(50% - (var(--gap) / 2));
-            background-color: #252320 !important; /* Absolut deckend */
+            background-color: #252320 !important;
             color: var(--text-white);
             overflow: hidden; text-align: center; font-weight: 900;
             backface-visibility: hidden;
             opacity: 1 !important;
         }
 
-        .upper { top: 0; border-radius: 8px 8px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1; }
+        .upper { top: 0; border-radius: 1.5cqw 1.5cqw 0 0; border-bottom: 0.1cqw solid rgba(255,255,255,0.1); z-index: 1; }
         
         .lower { 
-            bottom: 0; border-radius: 0 8px 8px; line-height: 0; 
+            bottom: 0; border-radius: 0 0 1.5cqw 1.5cqw; line-height: 0; 
             z-index: 1;
-            transform: translateZ(-10px);
+            transform: translateZ(-1cqw);
         }
 
         .leaf {
@@ -92,57 +106,70 @@
             transform-origin: bottom;
             transform-style: preserve-3d; 
             transition: none; 
-            transform: translateZ(10px); /* Verhindert Z-Fighting */
+            transform: translateZ(1cqw);
         }
 
         .leaf-front, .leaf-back {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            backface-visibility: hidden; background: var(--flap-bg); color: var(--text-white);
-            text-align: center; font-size: var(--font-size); overflow: hidden;
+            backface-visibility: hidden; background: #252320; color: var(--text-white);
+            text-align: center; overflow: hidden;
         }
 
-        .leaf-front { border-radius: 10px 10px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 2; }
-        .leaf-back { transform: rotateX(-270deg) translateZ(1px); border-radius: 0 0 10px 10px; line-height: 0; z-index: 2; }
+        .leaf-front { border-radius: 1.5cqw 1.5cqw 0 0; border-bottom: 0.1cqw solid rgba(255,255,255,0.1); z-index: 2; }
+        .leaf-back { transform: rotateX(-270deg) translateZ(0.1cqw); border-radius: 0 0 1.5cqw 1.5cqw; line-height: 0; z-index: 2; }
 
         .flipping .leaf { 
             transition: transform var(--anim-speed) cubic-bezier(0.4, 0, 0.3, 1.5);
-            transform: rotateX(-170deg) translateZ(1px); /* Karlsson-Stop Winkel */
+            transform: rotateX(-170deg) translateZ(0.1cqw);
         }
 
         .flip-unit::before {
-            content: ''; position: absolute; top: 50%; left: -3px; right: -3px;
-            height: 3px; background: #444; z-index: 10;
-            border-radius: 10px; transform: translateY(-50%);
+            content: ''; position: absolute; top: 50%; left: -0.5cqw; right: -0.5cqw;
+            height: 0.5cqw; background: #444; z-index: 10;
+            border-radius: 1.5cqw; transform: translateY(-50%);
         }
 
         /* --- SIZES --- */
-        .year-digit { width: 52px; height: 80px; font-size: 69px; }
-        .year-digit .upper, .year-digit .leaf-front { line-height: 80px; }
+        .year-digit { 
+            width: 9cqw; 
+            height: 13cqw; 
+            font-size: 11cqw; 
+        }
+        .year-digit .upper, .year-digit .leaf-front { line-height: 13cqw; }
 
-        .day-name-flip, .month-flip { width: 180px; height: 80px; font-size: 52px; }
+        .day-name-flip, .month-flip { width: 30cqw; height: 13cqw; font-size: 8.5cqw; }
         .day-name-flip .upper, .day-name-flip .leaf-front,
-        .month-flip .upper, .month-flip .leaf-front { line-height: 80px; }
+        .month-flip .upper, .month-flip .leaf-front { line-height: 13cqw; }
 
-        .day-num-group { grid-row: 2 / span 2; grid-column: 2; display: flex; gap: 10px; height: 180px; }
-        .num-digit { width: 100px; height: 180px; font-size: 172px; }
-        .num-digit .upper, .num-digit .leaf-front { line-height: 180px; }
+        .day-num-group { grid-row: 2 / span 2; grid-column: 2; display: flex; gap: 1.5cqw; height: 30cqw; }
+        .num-digit { 
+            width: 17cqw; 
+            height: 30cqw; 
+            font-size: 28cqw; 
+        }
+        .num-digit .upper, .num-digit .leaf-front { line-height: 30cqw; }
 
-        .sec-counter-group { display: flex; gap: 5px; justify-content: center; opacity: 0.8; }
-        .sec-digit { width: 45px; height: 60px; font-size: 46px; }
-        .sec-digit .upper, .sec-digit .leaf-front { line-height: 60px; }
+        .sec-counter-group { display: flex; gap: 0.8cqw; justify-content: center; opacity: 0.8; }
+        .sec-digit { width: 7cqw; height: 10cqw; font-size: 8cqw; }
+        .sec-digit .upper, .sec-digit .leaf-front { line-height: 10cqw; }
 
         /* Analog Clock */
         .analog-clock {
-            width: 250px; height: 250px; border-radius: 50%;
-            background: #252320; position: relative; border: 2px solid #333;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            width: 40cqw; 
+            height: 40cqw; 
+            border-radius: 50%;
+            background: #252320; position: relative; border: 0.3cqw solid #333;
+            box-shadow: 0 1.5cqw 3cqw rgba(0,0,0,0.4);
         }
-        .analog-marker { position: absolute; width: 2px; height: 10px; background: #555; left: 50%; transform-origin: 50% 125px; }
-        .center-dot { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; background: #fff; border-radius: 2px; }
-        .hour-hand { width: 6px; height: 80px; margin-left: -3px; z-index: 8; }
-        .min-hand { width: 4px; height: 100px; margin-left: -2px; z-index: 9; }
-        .sec-hand { width: 2px; height: 100px; margin-left: -1px; background: #ff3b30; z-index: 11; }
+        .analog-marker { 
+            position: absolute; width: 0.3cqw; height: 1.5cqw; background: #555; left: 50%; 
+            transform-origin: 50% 20cqw; /* Hälfte der 40cqw */
+        }
+        .center-dot { position: absolute; top: 50%; left: 50%; width: 1.2cqw; height: 1.2cqw; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; background: #fff; border-radius: 0.3cqw; }
+        .hour-hand { width: 1cqw; height: 12cqw; margin-left: -0.5cqw; z-index: 8; }
+        .min-hand { width: 0.6cqw; height: 16cqw; margin-left: -0.3cqw; z-index: 9; }
+        .sec-hand { width: 0.3cqw; height: 16cqw; margin-left: -0.15cqw; background: #ff3b30; z-index: 11; }
     </style>
 </head>
 <body>
@@ -171,7 +198,7 @@
             </div>
 
             <div class="col-right">
-                <div id="day-num-group" style="display:flex; gap:10px;">
+                <div id="day-num-group" style="display:flex; gap:1.5cqw;">
                     <div class="flip-unit num-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
                     <div class="flip-unit num-digit"><div class="upper">0</div><div class="lower">0</div><div class="leaf"><div class="leaf-front">0</div><div class="leaf-back">0</div></div></div>
                 </div>
@@ -236,7 +263,6 @@
     function updateFlipUnit(elementOrId, val) {
         const unit = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
         
-        // Nur flippen, wenn sich der Wert wirklich geändert hat
         if (unit.dataset.val !== val) {
             const old = unit.dataset.val || "0";
             const up = unit.querySelector('.upper');
@@ -244,35 +270,24 @@
             const front = unit.querySelector('.leaf-front');
             const back = unit.querySelector('.leaf-back');
 
-            // Animation zurücksetzen für einen sauberen Neustart
             unit.classList.remove('flipping');
-            void unit.offsetWidth; // Der "Magic Reflow"
+            void unit.offsetWidth;
 
-            // --- PHASE 1: DER START (0ms) ---
-            // Die Klappe (front) hält die alte Zahl fest
             front.textContent = old;
-            // Die Rückseite (back) bereitet die neue Zahl vor (-270deg Vorspannung im CSS)
             back.textContent = val;
-            // Oben im Hintergrund (up) erscheint SOFORT die neue Zahl
             up.textContent = val;
-            // Unten (low) bleibt die alte Zahl, wird aber gleich "begraben"
             low.textContent = old;
 
             unit.classList.add('flipping');
 
-            // --- PHASE 2: DER WECHSEL (300ms bei 0.6s Speed / 200ms bei 0.4s) ---
-            // Genau wenn die Karte senkrecht steht, tauschen wir unten aus.
-            // Das ist der Moment, in dem das Auge die "Befreiung" wahrnimmt.
             setTimeout(() => {
                 low.textContent = val;
-            }, 300); // Bei 0.4s Gesamtzeit hier 200 nutzen
+            }, 300);
 
-            // --- PHASE 3: DIE LANDUNG (600ms bei 0.6s Speed / 400ms bei 0.4s) ---
             setTimeout(() => { 
                 unit.classList.remove('flipping');
-                // Vorderseite für den nächsten Durchgang neutralisieren
                 front.textContent = val;
-            }, 300); // Bei 0.4s Gesamtzeit hier 400 nutzen
+            }, 600); 
 
             unit.dataset.val = val;
         }
